@@ -80,20 +80,12 @@ class User {
     const check = validator.isObject()
       .withOptional('age_max', validator.isNumber())
       .withOptional('age_min', validator.isNumber())
+      .withOptional('limit', validator.isNumber())
+      .withOptional('sort', validator.isNumber())
 
     this.app.post('/users/search', validator.express(check), (req, res) => {
       try {
         const filters = [];
-
-        if (req.body.age_min) {
-          filters.push({
-            $match: {
-              age: {
-                $lte: req.body.age_min
-              }
-            }
-          });
-        }
 
         if (req.body.age_max) {
           filters.push({
@@ -105,11 +97,31 @@ class User {
           });
         }
 
+        if (req.body.age_min) {
+          filters.push({
+            $match: {
+              age: {
+                $lte: req.body.age_min
+              }
+            }
+          });
+        }
+
+        if (req.body.sort) {
+          filters.push({
+            $sort: {
+              age: req.body.sort
+            }
+          });
+        }
+
         if (!req.body.age_max && !req.body.age_min) {
           filters.push({
             $match: {}
           });
         }
+
+        filters.push({ $limit: req.body.limit || 10 });
 
         this.UserSchema.aggregate(filters)
           .then(user => {
