@@ -1,21 +1,18 @@
-module.exports = [{
-  id: 'a',
-  name: 'cyril',
-  age: 32
+const mongoose = require('mongoose')
+
+const Schema = new mongoose.Schema({
+  name: String,
+  age: Number
 }, {
-  id: 'b',
-  name: 'camille',
-  age: 24
-}, {
-  id: 'c',
-  name: 'david',
-  age: 50
-}, {
-  id: 'd',
-  name: 'laura',
-  age: 8
-}, {
-  id: 'e',
-  name: 'cindy',
-  age: 78
-}]
+  collection: 'users',
+  minimize: false,
+  versionKey: false
+}).set('toJSON', {
+  transform: (doc, ret) => {
+    ret.id = ret._id
+
+    delete ret._id
+  }
+})
+
+module.exports = Schema

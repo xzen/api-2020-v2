@@ -1,6 +1,6 @@
 const validator = require('node-validator')
 
-const UserSchema = require ('../models/user-mongo.js')
+const UserSchema = require ('../models/user.js')
 const userModel = require('../models/user.js')
 
 /**
@@ -11,8 +11,7 @@ const userModel = require('../models/user.js')
 class User {
   constructor(app, connect) {
     this.app = app
-    this.userModel = userModel // mock
-    this.UserSchema = connect.model('User', UserSchema) // mongodb
+    this.UserSchema = connect.model('User', UserSchema)
 
     this.create()
     this.delete()
@@ -57,13 +56,13 @@ class User {
     this.app.delete('/user/delete/:id', (req, res) => {
       try {
         this.UserSchema.findByIdAndDelete(req.params.id).then(user => {
-          res.status(200).json(user);
+          res.status(200).json(user)
         }).catch(err => {
           res.status(500).json({
             code: 500,
             message: 'Internal Server Error'
           })
-        });
+        })
       } catch (err) {
         res.status(500).json({
           code: 500,
@@ -85,7 +84,7 @@ class User {
 
     this.app.post('/users/search', validator.express(check), (req, res) => {
       try {
-        const filters = [];
+        const filters = []
 
         if (req.body.age_max) {
           filters.push({
@@ -94,7 +93,7 @@ class User {
                 $gte: req.body.age_max
               }
             }
-          });
+          })
         }
 
         if (req.body.age_min) {
@@ -104,7 +103,7 @@ class User {
                 $lte: req.body.age_min
               }
             }
-          });
+          })
         }
 
         if (req.body.sort) {
@@ -112,20 +111,20 @@ class User {
             $sort: {
               age: req.body.sort
             }
-          });
+          })
         }
 
-        filters.push({ $limit: req.body.limit || 10 });
+        filters.push({ $limit: req.body.limit || 10 })
 
         this.UserSchema.aggregate(filters)
           .then(user => {
-            res.status(200).json(user || {});
+            res.status(200).json(user || {})
           }).catch(err => {
             res.status(500).json({
               code: 500,
               message: err
-            });
-          });
+            })
+          })
       } catch (err) {
         res.status(500).json({
           code: 500,
@@ -143,13 +142,13 @@ class User {
       try {
         this.UserSchema.findById(req.params.id)
           .then(user => {
-            res.status(200).json(user || {});
+            res.status(200).json(user || {})
           }).catch(err => {
             res.status(500).json({
               code: 500,
               message: err
-            });
-          });
+            })
+          })
       } catch (err) {
         res.status(500).json({
           code: 500,
@@ -171,13 +170,13 @@ class User {
       try {
         this.UserSchema.findByIdAndUpdate(req.params.id, req.body, {new: true})
           .then(user => {
-            res.status(200).json(user);
+            res.status(200).json(user)
           }).catch(err => {
             res.status(500).json({
               code: 500,
               message: 'Internal Server Error'
             })
-          });
+          })
       } catch (err) {
         res.status(500).json({
           code: 500,
