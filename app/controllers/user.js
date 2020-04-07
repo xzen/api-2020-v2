@@ -115,12 +115,6 @@ class User {
           });
         }
 
-        if (!req.body.age_max && !req.body.age_min) {
-          filters.push({
-            $match: {}
-          });
-        }
-
         filters.push({ $limit: req.body.limit || 10 });
 
         this.UserSchema.aggregate(filters)
