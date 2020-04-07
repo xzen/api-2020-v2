@@ -78,7 +78,7 @@ class User {
    */
   search () {
     const check = validator.isObject()
-      .withOptional('age_max', validator.isString())
+      .withOptional('age_max', validator.isNumber())
       .withOptional('age_min', validator.isNumber())
 
     this.app.post('/users/search', validator.express(check), (req, res) => {
@@ -86,12 +86,40 @@ class User {
         const filters = [];
 
         if (req.body.age_min) {
+          filters.push({
+            $match: {
+              age: {
+                $lte: req.body.age_min
+              }
+            }
+          });
         }
 
         if (req.body.age_max) {
+          filters.push({
+            $match: {
+              age: {
+                $gte: req.body.age_max
+              }
+            }
+          });
         }
 
-        res.status(200).json([])
+        if (!req.body.age_max && !req.body.age_min) {
+          filters.push({
+            $match: {}
+          });
+        }
+
+        this.UserSchema.aggregate(filters)
+          .then(user => {
+            res.status(200).json(user || {});
+          }).catch(err => {
+            res.status(500).json({
+              code: 500,
+              message: err
+            });
+          });
       } catch (err) {
         res.status(500).json({
           code: 500,
@@ -107,14 +135,15 @@ class User {
   show () {
     this.app.get('/user/show/:id', (req, res) => {
       try {
-        this.UserSchema.findById(req.params.id).then(user => {
-          res.status(200).json(user || {});
-        }).catch(err => {
-          res.status(500).json({
-            code: 500,
-            message: err
+        this.UserSchema.findById(req.params.id)
+          .then(user => {
+            res.status(200).json(user || {});
+          }).catch(err => {
+            res.status(500).json({
+              code: 500,
+              message: err
+            });
           });
-        });
       } catch (err) {
         res.status(500).json({
           code: 500,
