@@ -123,8 +123,14 @@ class User {
         filters.push({ $limit: req.body.limit || 10 })
 
         this.UserSchema.aggregate(filters)
-          .then(user => {
-            res.status(200).json(user || {})
+          .then(users => {
+            res.status(200).json(users.map(user => {  
+              user.id = user._id
+
+              delete user._id
+
+              return user
+            }) || [])
           }).catch(err => {
             res.status(500).json({
               code: 500,
