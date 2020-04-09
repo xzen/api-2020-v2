@@ -1,8 +1,15 @@
 const mongoose = require('mongoose')
 
 const Schema = new mongoose.Schema({
-  name: String,
-  age: Number
+  firstName: String,
+  lastName: String,
+  gender: String,
+  age: Number,
+  adressNumber: Number,
+  adressType: String,
+  adressName: String,
+  cityCode: String,
+  cityName: String
 }, {
   collection: 'users',
   minimize: false,

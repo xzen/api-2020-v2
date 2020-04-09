@@ -1,7 +1,6 @@
 const validator = require('node-validator')
 
-const UserSchema = require ('../models/user.js')
-const userModel = require('../models/user.js')
+const UserSchema = require('../models/user.js')
 
 /**
  * User
@@ -9,7 +8,7 @@ const userModel = require('../models/user.js')
  * {Object} app - express context
  */
 class User {
-  constructor(app, connect) {
+  constructor (app, connect) {
     this.app = app
     this.UserSchema = connect.model('User', UserSchema)
 
@@ -25,8 +24,15 @@ class User {
    */
   create () {
     const check = validator.isObject()
-      .withRequired('name', validator.isString())
+      .withRequired('firstName', validator.isString())
+      .withRequired('lastName', validator.isString())
+      .withRequired('gender', validator.isString())
       .withRequired('age', validator.isNumber())
+      .withRequired('adressNumber', validator.isNumber())
+      .withRequired('adressType', validator.isString())
+      .withRequired('adressName', validator.isString())
+      .withRequired('cityCode', validator.isString())
+      .withRequired('cityName', validator.isString())
 
     this.app.post('/user/create', validator.express(check), (req, res) => {
       try {
@@ -34,7 +40,7 @@ class User {
 
         userSchema.save().then(user => {
           res.status(200).json(user)
-        }).catch(err => {
+        }).catch(() => {
           res.status(500).json({
             code: 500,
             message: 'Internal Server Error'
@@ -57,7 +63,7 @@ class User {
       try {
         this.UserSchema.findByIdAndDelete(req.params.id).then(user => {
           res.status(200).json(user)
-        }).catch(err => {
+        }).catch(() => {
           res.status(500).json({
             code: 500,
             message: 'Internal Server Error'
@@ -72,7 +78,7 @@ class User {
     })
   }
 
-   /**
+  /**
    * Search
    */
   search () {
@@ -163,15 +169,22 @@ class User {
    */
   update () {
     const check = validator.isObject()
-      .withOptional('name', validator.isString())
+      .withOptional('firstName', validator.isString())
+      .withOptional('lastName', validator.isString())
+      .withOptional('gender', validator.isString())
       .withOptional('age', validator.isNumber())
+      .withOptional('adressNumber', validator.isNumber())
+      .withOptional('adressType', validator.isString())
+      .withOptional('adressName', validator.isString())
+      .withOptional('cityCode', validator.isString())
+      .withOptional('cityName', validator.isString())
 
     this.app.put('/user/update/:id', validator.express(check), (req, res) => {
       try {
         this.UserSchema.findByIdAndUpdate(req.params.id, req.body, {new: true})
           .then(user => {
             res.status(200).json(user)
-          }).catch(err => {
+          }).catch(() => {
             res.status(500).json({
               code: 500,
               message: 'Internal Server Error'
