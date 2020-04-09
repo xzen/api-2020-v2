@@ -1,6 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
+const cors = require('cors')
 
 const routes = require('./routes.js')
 
@@ -50,6 +51,7 @@ class Server {
    * Middleware
    */
   middleware () {
+    this.app.use(cors())
     this.app.use(bodyParser.json())
     this.app.use(bodyParser.urlencoded({
       extended: true

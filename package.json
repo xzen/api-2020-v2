@@ -26,7 +26,8 @@
     "express": "4.16.3",
     "helmet": "3.12.1",
     "mongoose": "5.1.4",
-    "node-validator": "0.1.27"
+    "node-validator": "0.1.27",
+    "pm2": "^4.2.3"
   },
   "devDependencies": {
     "eslint": "4.19.1",
