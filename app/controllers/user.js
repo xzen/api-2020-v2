@@ -83,6 +83,8 @@ class User {
    */
   search () {
     const check = validator.isObject()
+      .withOptional('firstName', validator.isString())
+      .withOptional('gender', validator.isString())
       .withOptional('age_max', validator.isNumber())
       .withOptional('age_min', validator.isNumber())
       .withOptional('limit', validator.isNumber())
@@ -91,6 +93,22 @@ class User {
     this.app.post('/users/search', validator.express(check), (req, res) => {
       try {
         const filters = []
+
+        if (req.body.firstName) {
+          filters.push({
+            $match: {
+              firstName: req.body.firstName
+            }
+          })
+        }
+
+        if (req.body.gender) {
+          filters.push({
+            $match: {
+              gender: req.body.gender
+            }
+          })
+        }
 
         if (req.body.age_max) {
           filters.push({
